@@ -1,8 +1,13 @@
 #include <Arduino.h>
 #include <FlexCAN_T4.h>
+#include <TimerOne.h>
 
 //LED
 const int ledPin = 33;
+
+// Forward Declaration 
+void blinkLED(void);
+void myInterrupt(void);
 
 // Define CAN bus parameters
 const int canSpeed = 500000;  // 500 kbps
@@ -12,6 +17,7 @@ CAN_message_t msg;
 
 int LED_State = 0;
 int counter_ms = 0;
+int bob = 0;
 
 //Used for CAN counter increments
 union _myunion
@@ -24,26 +30,48 @@ union _myunion
 myunion;
 
 void setup() {
+  Timer1.initialize(1000);
   Serial.begin(115200);
-  //Serial.println("Hello world");
-  // Initialize CAN bus
   Can2.begin();
   Can2.setBaudRate(500000);
-  // Initialize the digital pin as an output. 
+  Timer1.attachInterrupt(blinkLED); // blinkLED to run every 0.15 seconds
   pinMode(ledPin, OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(32), myInterrupt, RISING);
+}
+
+// The interrupt will blink the LED
+void blinkLED(void)
+{
+  if (++counter_ms >= 1000) {
+    counter_ms = 0;
+    bob=1;
+  }
+  if (counter_ms == 100) {
+    digitalWrite(ledPin, LOW);
+  }
+}
+
+void myInterrupt(void) {
+  // Your code goes here
+    // Create a CAN message
+    CAN_message_t canMsg;
+    canMsg.id = 0x123;  // CAN ID
+    canMsg.len = 8;     // Message length (8 bytes)
+    myunion.u32data++;
+    canMsg.buf[0] = myunion.u8data[0];
+    canMsg.buf[1] = myunion.u8data[1];
+    canMsg.buf[2] = myunion.u8data[2];
+    canMsg.buf[3] = myunion.u8data[3];
+    canMsg.buf[4] = canMsg.buf[5] = canMsg.buf[6] = canMsg.buf[7] = 0x00;  
+    Can2.write(canMsg);
+    digitalWrite(ledPin, HIGH);
+
 }
 
 void loop() {
 
-  if (++counter_ms >= 1000) {
-    counter_ms = 0;
-  }
 
-  // Create a CAN message
-  CAN_message_t canMsg;
-  canMsg.id = 0x123;  // CAN ID
-  canMsg.len = 8;     // Message length (8 bytes)
-  
+
   // Fill data bytes with some values
 //  for (int i = 0; i < 8; i++) {
 //    canMsg.buf[i] = i;
@@ -51,24 +79,11 @@ void loop() {
 
   //Serial.println("SG Test");
 
-  if (counter_ms == 0) {
-  // set the LED on
-  digitalWrite(ledPin, HIGH);
-    // Send the CAN message
-
-  myunion.u32data++;
-  canMsg.buf[0] = myunion.u8data[0];
-  canMsg.buf[1] = myunion.u8data[1];
-  canMsg.buf[2] = myunion.u8data[2];
-  canMsg.buf[3] = myunion.u8data[3];
-  canMsg.buf[4] = canMsg.buf[5] = canMsg.buf[6] = canMsg.buf[7] = 0x00;  
-  Can2.write(canMsg);
+  if (bob == 1) {
+    bob = 0;
   } 
-  if (counter_ms == 100) {
-  digitalWrite(ledPin, LOW);
-  }
-  /*
-    while ( Can2.read(msg) ) {
+
+  while ( Can2.read(msg) ) {
     Serial.print("CAN1 "); 
     Serial.print("MB: "); Serial.print(msg.mb);
     Serial.print("  ID: 0x"); Serial.print(msg.id, HEX );
@@ -80,7 +95,4 @@ void loop() {
     }
     Serial.print("  TS: "); Serial.println(msg.timestamp);
   }
-*/
-  // Wait for one second before sending the next frame
-  delay(1);
 }
