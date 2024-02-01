@@ -18,6 +18,7 @@ CAN_message_t msg;
 int LED_State = 0;
 int counter_ms = 0;
 int bob = 0;
+int SerCount = 0;
 
 //Used for CAN counter increments
 union _myunion
@@ -44,9 +45,10 @@ void blinkLED(void)
 {
   if (++counter_ms >= 1000) {
     counter_ms = 0;
-    bob=1;
+    bob = 1;
+    SerCount ++;
   }
-  if (counter_ms <= 100) {
+  if (counter_ms <= 400) {
     digitalWrite(ledPin, LOW);
   }
 }
@@ -70,7 +72,7 @@ void myInterrupt(void) {
     Can2.write(canMsg);
 
     // Send a serial message
-    Serial.print("PPS Time Stamp\r\n");
+    Serial.print("PPS Time Stamp "); Serial.println(SerCount);
 }
 
 void loop() {
