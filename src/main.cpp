@@ -46,13 +46,16 @@ void blinkLED(void)
     counter_ms = 0;
     bob=1;
   }
-  if (counter_ms == 100) {
+  if (counter_ms <= 100) {
     digitalWrite(ledPin, LOW);
   }
 }
 
 void myInterrupt(void) {
-  // Your code goes here
+ 
+    //Drive LED High
+    digitalWrite(ledPin, HIGH);
+    
     // Create a CAN message
     CAN_message_t canMsg;
     canMsg.id = 0x123;  // CAN ID
@@ -63,22 +66,16 @@ void myInterrupt(void) {
     canMsg.buf[2] = myunion.u8data[2];
     canMsg.buf[3] = myunion.u8data[3];
     canMsg.buf[4] = canMsg.buf[5] = canMsg.buf[6] = canMsg.buf[7] = 0x00;  
+    // Send the CAN message
     Can2.write(canMsg);
-    digitalWrite(ledPin, HIGH);
 
+    // Send a serial message
+    Serial.print("PPS Time Stamp\r\n");
 }
 
 void loop() {
 
-
-
-  // Fill data bytes with some values
-//  for (int i = 0; i < 8; i++) {
-//    canMsg.buf[i] = i;
-//  }
-
-  //Serial.println("SG Test");
-
+  // LED toggle
   if (bob == 1) {
     bob = 0;
   } 
