@@ -2,6 +2,8 @@
 #include <FlexCAN_T4.h>
 #include <TimerOne.h>
 
+#define HWSERIAL Serial2
+
 //LED
 const int ledPin = 33;
 
@@ -18,7 +20,7 @@ CAN_message_t msg;
 int LED_State = 0;
 int counter_ms = 0;
 int bob = 0;
-int SerCount = 0;
+int SerCount = 1;
 
 //Used for CAN counter increments
 union _myunion
@@ -33,6 +35,7 @@ myunion;
 void setup() {
   Timer1.initialize(1000);
   Serial.begin(115200);
+  HWSERIAL.begin(115200);
   Can2.begin();
   Can2.setBaudRate(500000);
   Timer1.attachInterrupt(blinkLED); // blinkLED to run every 0.15 seconds
@@ -48,7 +51,7 @@ void blinkLED(void)
     bob = 1;
     SerCount ++;
   }
-  if (counter_ms <= 400) {
+  if (counter_ms <= 100) {
     digitalWrite(ledPin, LOW);
   }
 }
@@ -72,7 +75,8 @@ void myInterrupt(void) {
     Can2.write(canMsg);
 
     // Send a serial message
-    Serial.print("PPS Time Stamp "); Serial.println(SerCount);
+    //Serial.print("PPS Time Stamp "); Serial.println(SerCount);
+    HWSERIAL.print("PPS Time Stamp "); HWSERIAL.println(SerCount);
 }
 
 void loop() {
