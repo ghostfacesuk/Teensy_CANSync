@@ -40,7 +40,7 @@ void setup() {
   Can2.setBaudRate(500000);
   Timer1.attachInterrupt(blinkLED); // blinkLED to run every 0.15 seconds
   pinMode(ledPin, OUTPUT);
-  attachInterrupt(digitalPinToInterrupt(32), myInterrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(14), myInterrupt, RISING);
 }
 
 // The interrupt will blink the LED
