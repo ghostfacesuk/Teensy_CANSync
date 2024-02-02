@@ -50,7 +50,7 @@ void blinkLED(void)
     counter_ms = 0;
     bob = 1;
   }
-  if (counter_ms <= 200) {
+  if (counter_ms <= 100) {
     digitalWrite(ledPin, LOW);
   }
 }
