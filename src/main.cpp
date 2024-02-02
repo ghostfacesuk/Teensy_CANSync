@@ -49,9 +49,8 @@ void blinkLED(void)
   if (++counter_ms >= 1000) {
     counter_ms = 0;
     bob = 1;
-    SerCount ++;
   }
-  if (counter_ms <= 100) {
+  if (counter_ms <= 200) {
     digitalWrite(ledPin, LOW);
   }
 }
@@ -77,6 +76,9 @@ void myInterrupt(void) {
     // Send a serial message
     //Serial.print("PPS Time Stamp "); Serial.println(SerCount);
     HWSERIAL.print("PPS Time Stamp "); HWSERIAL.println(SerCount);
+
+    // Increment Serial message 
+    SerCount ++;
 }
 
 void loop() {
