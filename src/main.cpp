@@ -19,7 +19,6 @@ CAN_message_t msg;
 
 int LED_State = 0;
 int counter_ms = 0;
-int bob = 0;
 int SerCount = 1;
 
 //Used for CAN counter increments
@@ -33,31 +32,34 @@ union _myunion
 myunion;
 
 void setup() {
-  Timer1.initialize(1000);
+  Timer1.initialize(1000); // 1,000 MicroSecs = 1ms
   Serial.begin(115200);
   HWSERIAL.begin(115200);
   Can2.begin();
   Can2.setBaudRate(500000);
-  Timer1.attachInterrupt(blinkLED); // blinkLED to run every 0.15 seconds
+  Timer1.attachInterrupt(blinkLED); // blinkLED 
   pinMode(ledPin, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(14), myInterrupt, RISING);
 }
 
-// The interrupt will blink the LED
+// The interrupt will happen every 1ms
 void blinkLED(void)
 {
   if (++counter_ms >= 1000) {
     counter_ms = 0;
   }
-  if (counter_ms >= 200) {
+  if (counter_ms >= 250 && LED_State == 1) {
     digitalWrite(ledPin, LOW);
+    LED_State = 0;
   }
 }
 
 void myInterrupt(void) {
  
     //Drive LED High
+    counter_ms = 0;
     digitalWrite(ledPin, HIGH);
+    LED_State = 1;
     
     // Create a CAN message
     CAN_message_t canMsg;
@@ -78,7 +80,6 @@ void myInterrupt(void) {
 
     // Increment Serial message 
     SerCount ++;
-    counter_ms = 0;
 }
 
 void loop() {
