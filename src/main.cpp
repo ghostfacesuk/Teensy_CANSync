@@ -48,9 +48,8 @@ void blinkLED(void)
 {
   if (++counter_ms >= 1000) {
     counter_ms = 0;
-    bob = 1;
   }
-  if (counter_ms <= 100) {
+  if (counter_ms >= 200) {
     digitalWrite(ledPin, LOW);
   }
 }
@@ -79,14 +78,10 @@ void myInterrupt(void) {
 
     // Increment Serial message 
     SerCount ++;
+    counter_ms = 0;
 }
 
 void loop() {
-
-  // LED toggle
-  if (bob == 1) {
-    bob = 0;
-  } 
 
   while ( Can2.read(msg) ) {
     Serial.print("CAN1 "); 
