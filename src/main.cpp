@@ -18,7 +18,6 @@ FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 CAN_message_t msg;
 
 int LED_State = 0;
-int counter_ms = 0;
 int SerCount = 1;
 
 //Used for CAN counter increments
@@ -32,12 +31,13 @@ union _myunion
 myunion;
 
 void setup() {
-  Timer1.initialize(1000); // 1,000 MicroSecs = 1ms
+  Timer1.initialize(250000); // MicroSecs = 250ms
+  Timer1.attachInterrupt(blinkLED); // blinkLED function 1ms interrupt
+  Timer1.stop(); // Stop the timer!
   Serial.begin(115200);
   HWSERIAL.begin(115200);
   Can2.begin();
   Can2.setBaudRate(500000);
-  Timer1.attachInterrupt(blinkLED); // blinkLED function 1ms interrupt
   pinMode(ledPin, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(14), myInterrupt, RISING);
 }
@@ -45,10 +45,8 @@ void setup() {
 // The interrupt will happen every 1ms
 void blinkLED(void)
 {
-  if (++counter_ms >= 1000) {
-    counter_ms = 0;
-  }
-  if (counter_ms >= 250 && LED_State == 1) {
+  if (LED_State == 1) {
+    Timer1.stop();
     digitalWrite(ledPin, LOW);
     LED_State = 0;
   }
@@ -57,8 +55,8 @@ void blinkLED(void)
 void myInterrupt(void) {
  
     //Drive LED High
-    counter_ms = 0;
     digitalWrite(ledPin, HIGH);
+    Timer1.start();
     LED_State = 1;
     
     // Create a CAN message
