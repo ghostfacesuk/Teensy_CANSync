@@ -37,7 +37,7 @@ void setup() {
   HWSERIAL.begin(115200);
   Can2.begin();
   Can2.setBaudRate(500000);
-  Timer1.attachInterrupt(blinkLED); // blinkLED 
+  Timer1.attachInterrupt(blinkLED); // blinkLED function 1ms interrupt
   pinMode(ledPin, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(14), myInterrupt, RISING);
 }
