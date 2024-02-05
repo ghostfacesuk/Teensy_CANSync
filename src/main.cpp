@@ -6,6 +6,7 @@
 
 //LED
 const int ledPin = 33;
+const int ledPin2 = 23;
 
 // Forward Declaration 
 void blinkLED(void);
@@ -40,6 +41,7 @@ void setup() {
   Can2.begin();
   Can2.setBaudRate(500000);
   pinMode(ledPin, OUTPUT);
+  pinMode(ledPin2, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(14), myInterrupt, RISING);
 }
 
@@ -50,6 +52,7 @@ void blinkLED(void)
   if (LED_Count == 26 && LED_State == 1) {
     Timer1.stop();
     digitalWrite(ledPin, LOW);
+    digitalWrite(ledPin2, LOW);
     LED_Count = 0;
     LED_State = 0;
   }
@@ -59,6 +62,7 @@ void myInterrupt(void) {
  
     //Drive LED High
     digitalWrite(ledPin, HIGH);
+    digitalWrite(ledPin2, HIGH);
     Timer1.start();
     LED_State = 1;
     
