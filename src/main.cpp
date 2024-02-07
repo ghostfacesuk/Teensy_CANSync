@@ -19,7 +19,6 @@ const int canSpeed = 500000;  // 500 kbps
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 CAN_message_t msg;
 
-int LED_State = 0;
 int LED_Count = 0;
 int SerCount = 1;
 
@@ -34,7 +33,7 @@ union _myunion
 myunion;
 
 void setup() {
-  Timer1.initialize(10000); // MicroSecs = 10ms
+  Timer1.initialize(1000); // MicroSecs = 1ms
   Timer1.attachInterrupt(blinkLED); // blinkLED function 1ms interrupt
   Timer1.stop(); // Stop the timer!
   Serial.begin(115200);
@@ -46,16 +45,15 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(28), myInterrupt, RISING);
 }
 
-// The interrupt will happen every 10ms
+// The interrupt will happen every 1ms
 void blinkLED(void)
 {
   LED_Count ++;
-  if (LED_Count == 11 && LED_State == 1) {
+  if (LED_Count >= 101) {
     Timer1.stop();
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
     LED_Count = 0;
-    LED_State = 0;
   }
 }
 
@@ -65,7 +63,6 @@ void myInterrupt(void) {
     digitalWrite(ledPin, HIGH);
     digitalWrite(ledPin2, HIGH);
     Timer1.start();
-    LED_State = 1;
     
     // Create a CAN message
     CAN_message_t canMsg;
