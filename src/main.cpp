@@ -3,6 +3,7 @@
 #include <TimerOne.h>
 
 #define HWSERIAL Serial2
+#define GNSSSERIAL Serial8
 
 //LED
 const int ledPin = 33;
