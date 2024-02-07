@@ -50,7 +50,7 @@ void setup() {
 void blinkLED(void)
 {
   LED_Count ++;
-  if (LED_Count == 26 && LED_State == 1) {
+  if (LED_Count == 11 && LED_State == 1) {
     Timer1.stop();
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
