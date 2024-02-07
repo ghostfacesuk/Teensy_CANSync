@@ -3,6 +3,7 @@
 #include <TimerOne.h>
 
 #define HWSERIAL Serial2
+#define GNSSSERIAL Serial8
 
 //LED
 const int ledPin = 33;
@@ -42,7 +43,7 @@ void setup() {
   Can2.setBaudRate(500000);
   pinMode(ledPin, OUTPUT);
   pinMode(ledPin2, OUTPUT);
-  attachInterrupt(digitalPinToInterrupt(14), myInterrupt, RISING);
+  attachInterrupt(digitalPinToInterrupt(28), myInterrupt, RISING);
 }
 
 // The interrupt will happen every 10ms
