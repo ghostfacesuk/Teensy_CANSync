@@ -6,8 +6,9 @@
 #define GNSSSERIAL Serial8
 
 //LED
-const int ledPin = 33;
-const int ledPin2 = 23;
+const int ledPin = 14; // Dig signal out on screw block terminal
+const int ledPin2 = 23; // Buzzer & Red LED
+const int ledPin3 = 33; // White LED Only
 
 // Forward Declaration 
 void blinkLED(void);
@@ -42,6 +43,7 @@ void setup() {
   Can2.setBaudRate(500000);
   pinMode(ledPin, OUTPUT);
   pinMode(ledPin2, OUTPUT);
+  pinMode(ledPin3, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(28), myInterrupt, RISING);
 }
 
@@ -53,6 +55,7 @@ void blinkLED(void)
     Timer1.stop();
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
+    digitalWrite(ledPin3, LOW);
     LED_Count = 0;
   }
 }
@@ -62,6 +65,7 @@ void myInterrupt(void) {
     //Drive LED High
     digitalWrite(ledPin, HIGH);
     digitalWrite(ledPin2, HIGH);
+    digitalWrite(ledPin3, HIGH);
     Timer1.start();
     
     // Create a CAN message

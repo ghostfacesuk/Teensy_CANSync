@@ -1,7 +1,7 @@
 # Teensy_CANSync
 
 ## Teensy 4.1
-* Pin 14 is the PPS REF input
+* Pin 14 is DIG OUT to Screw terminal block
 * Pin 23 is Red LED + Buzzer
 * Pin 28 is PPS REF from uBlox
 * Pin 33 is White LED
@@ -10,14 +10,16 @@
 * Pins 0 & 1 CAN2 (CRX2 to RX, CTX2 to TX on CAN Transceiver)
 
 ## How to use
-* Connect 1Hz (or slower) PPS signal to input terminal 
-* Connect CAN and Serial cables to 9-way D-type connectors
+* Connect GPS antenna to uBlox SMA connector
 * Connect USB Micro cable to PC (used for powering the Teensy)
+* connect Digital wire to screw terminal block (optional)
+* Connect CAN and Serial cables to 9-way D-type connectors (optional)
+* Swap jumper position from perpendicular position to parallel position to enable Red LED and Buzzer (optional) 
 
 ## Config & Behaviour
 * CAN bus will be fixed to 500kbps - 0x123 will be transmitted when PPS input is detected
 * RS232 will be fixed to 115200 - PPS Time Stamp XX will be transmitted when PPS input is detected
-* Pins 23 and 33 will be driven HIGH when PPS input is detected (attached to LEDs and Buzzer)
+* Pins 14, 23, and 33 will be driven HIGH when PPS input is detected (attached to LEDs, block, and Buzzer)
 
 ## Latency Info
 * CAN - PPS to start of CAN message transmit = 3.2 Microseconds
