@@ -51,45 +51,50 @@ void setup() {
 void blinkLED(void)
 {
   LED_Count ++;
-  if (LED_Count >= 101) {
+  if (LED_Count == 101) {
     Timer1.stop();
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
     digitalWrite(ledPin3, LOW);
     LED_Count = 0;
   }
+
+  if (LED_Count >= 102) {
+    LED_Count = 0;
+  }
 }
 
 void myInterrupt(void) {
-    
-    // Drive LED High
-    digitalWrite(ledPin, HIGH);
-    digitalWrite(ledPin2, HIGH);
-    digitalWrite(ledPin3, HIGH);
+    if (LED_Count <= 1) {
+      // Drive LED High
+      digitalWrite(ledPin, HIGH);
+      digitalWrite(ledPin2, HIGH);
+      digitalWrite(ledPin3, HIGH);
 
-    // Reset counter and start timer
-    LED_Count = 0;
-    Timer1.start();
-    
-    // Create a CAN message
-    CAN_message_t canMsg;
-    canMsg.id = 0x123;  // CAN ID
-    canMsg.len = 8;     // Message length (8 bytes)
-    myunion.u32data++;
-    canMsg.buf[0] = myunion.u8data[0];
-    canMsg.buf[1] = myunion.u8data[1];
-    canMsg.buf[2] = myunion.u8data[2];
-    canMsg.buf[3] = myunion.u8data[3];
-    canMsg.buf[4] = canMsg.buf[5] = canMsg.buf[6] = canMsg.buf[7] = 0x00;  
-    // Send the CAN message
-    Can2.write(canMsg);
+      // Reset counter and start timer
+      LED_Count = 0;
+      Timer1.start();
+      
+      // Create a CAN message
+      CAN_message_t canMsg;
+      canMsg.id = 0x123;  // CAN ID
+      canMsg.len = 8;     // Message length (8 bytes)
+      myunion.u32data++;
+      canMsg.buf[0] = myunion.u8data[0];
+      canMsg.buf[1] = myunion.u8data[1];
+      canMsg.buf[2] = myunion.u8data[2];
+      canMsg.buf[3] = myunion.u8data[3];
+      canMsg.buf[4] = canMsg.buf[5] = canMsg.buf[6] = canMsg.buf[7] = 0x00;  
+      // Send the CAN message
+      Can2.write(canMsg);
 
-    // Send a serial message
-    //Serial.print("PPS Time Stamp "); Serial.println(SerCount);
-    HWSERIAL.print("PPS Time Stamp "); HWSERIAL.println(SerCount);
+      // Send a serial message
+      //Serial.print("PPS Time Stamp "); Serial.println(SerCount);
+      HWSERIAL.print("PPS Time Stamp "); HWSERIAL.println(SerCount);
 
-    // Increment Serial message 
-    SerCount ++;
+      // Increment Serial message 
+      SerCount ++;
+    }
 }
 
 void loop() {
