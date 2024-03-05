@@ -22,6 +22,7 @@ CAN_message_t msg;
 
 int LED_Count = 0;
 int SerCount = 1;
+int LED_Flag = 0;
 
 //Used for CAN counter increments
 union _myunion
@@ -51,28 +52,26 @@ void setup() {
 void blinkLED(void)
 {
   LED_Count ++;
-  if (LED_Count == 101) {
+  if (LED_Count >= 101) {
     Timer1.stop();
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
     digitalWrite(ledPin3, LOW);
-    LED_Count = 0;
-  }
-
-  if (LED_Count >= 102) {
+    LED_Flag = 0;
     LED_Count = 0;
   }
 }
 
 void myInterrupt(void) {
-    if (LED_Count <= 1) {
+  LED_Count = 0;
+    if (LED_Flag == 0) {
       // Drive LED High
       digitalWrite(ledPin, HIGH);
       digitalWrite(ledPin2, HIGH);
       digitalWrite(ledPin3, HIGH);
 
       // Reset counter and start timer
-      LED_Count = 0;
+      LED_Flag = 1;
       Timer1.start();
       
       // Create a CAN message
