@@ -5,7 +5,7 @@
 #define HWSERIAL Serial2
 #define GNSSSERIAL Serial8
 
-//LED
+//LED, Buzzer, Digout
 const int ledPin = 14; // Dig signal out on screw block terminal
 const int ledPin2 = 23; // Buzzer & Red LED
 const int ledPin3 = 33; // White LED Only
@@ -61,11 +61,14 @@ void blinkLED(void)
 }
 
 void myInterrupt(void) {
- 
-    //Drive LED High
+    
+    // Drive LED High
     digitalWrite(ledPin, HIGH);
     digitalWrite(ledPin2, HIGH);
     digitalWrite(ledPin3, HIGH);
+
+    // Reset counter and start timer
+    LED_Count = 0;
     Timer1.start();
     
     // Create a CAN message
