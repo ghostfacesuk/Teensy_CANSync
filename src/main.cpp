@@ -5,9 +5,10 @@
 #define HWSERIAL Serial2
 #define GNSSSERIAL Serial8
 
-//LED
-const int ledPin = 33;
-const int ledPin2 = 23;
+//LED, Buzzer, Digout
+const int ledPin = 14; // Dig signal out on screw block terminal
+const int ledPin2 = 23; // Buzzer & Red LED
+const int ledPin3 = 33; // White LED Only
 
 // Forward Declaration 
 void blinkLED(void);
@@ -19,9 +20,9 @@ const int canSpeed = 500000;  // 500 kbps
 FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 CAN_message_t msg;
 
-int LED_State = 0;
 int LED_Count = 0;
 int SerCount = 1;
+int LED_Flag = 0;
 
 //Used for CAN counter increments
 union _myunion
@@ -34,7 +35,7 @@ union _myunion
 myunion;
 
 void setup() {
-  Timer1.initialize(10000); // MicroSecs = 10ms
+  Timer1.initialize(1000); // MicroSecs = 1ms
   Timer1.attachInterrupt(blinkLED); // blinkLED function 1ms interrupt
   Timer1.stop(); // Stop the timer!
   Serial.begin(115200);
@@ -43,49 +44,56 @@ void setup() {
   Can2.setBaudRate(500000);
   pinMode(ledPin, OUTPUT);
   pinMode(ledPin2, OUTPUT);
+  pinMode(ledPin3, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(28), myInterrupt, RISING);
 }
 
-// The interrupt will happen every 10ms
+// The interrupt will happen every 1ms
 void blinkLED(void)
 {
   LED_Count ++;
-  if (LED_Count == 26 && LED_State == 1) {
+  if (LED_Count >= 101) {
     Timer1.stop();
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
+    digitalWrite(ledPin3, LOW);
+    LED_Flag = 0;
     LED_Count = 0;
-    LED_State = 0;
   }
 }
 
 void myInterrupt(void) {
- 
-    //Drive LED High
-    digitalWrite(ledPin, HIGH);
-    digitalWrite(ledPin2, HIGH);
-    Timer1.start();
-    LED_State = 1;
-    
-    // Create a CAN message
-    CAN_message_t canMsg;
-    canMsg.id = 0x123;  // CAN ID
-    canMsg.len = 8;     // Message length (8 bytes)
-    myunion.u32data++;
-    canMsg.buf[0] = myunion.u8data[0];
-    canMsg.buf[1] = myunion.u8data[1];
-    canMsg.buf[2] = myunion.u8data[2];
-    canMsg.buf[3] = myunion.u8data[3];
-    canMsg.buf[4] = canMsg.buf[5] = canMsg.buf[6] = canMsg.buf[7] = 0x00;  
-    // Send the CAN message
-    Can2.write(canMsg);
+  LED_Count = 0;
+    if (LED_Flag == 0) {
+      // Drive LED High
+      digitalWrite(ledPin, HIGH);
+      digitalWrite(ledPin2, HIGH);
+      digitalWrite(ledPin3, HIGH);
 
-    // Send a serial message
-    //Serial.print("PPS Time Stamp "); Serial.println(SerCount);
-    HWSERIAL.print("PPS Time Stamp "); HWSERIAL.println(SerCount);
+      // Reset counter and start timer
+      LED_Flag = 1;
+      Timer1.start();
+      
+      // Create a CAN message
+      CAN_message_t canMsg;
+      canMsg.id = 0x123;  // CAN ID
+      canMsg.len = 8;     // Message length (8 bytes)
+      myunion.u32data++;
+      canMsg.buf[0] = myunion.u8data[0];
+      canMsg.buf[1] = myunion.u8data[1];
+      canMsg.buf[2] = myunion.u8data[2];
+      canMsg.buf[3] = myunion.u8data[3];
+      canMsg.buf[4] = canMsg.buf[5] = canMsg.buf[6] = canMsg.buf[7] = 0x00;  
+      // Send the CAN message
+      Can2.write(canMsg);
 
-    // Increment Serial message 
-    SerCount ++;
+      // Send a serial message
+      //Serial.print("PPS Time Stamp "); Serial.println(SerCount);
+      HWSERIAL.print("PPS Time Stamp "); HWSERIAL.println(SerCount);
+
+      // Increment Serial message 
+      SerCount ++;
+    }
 }
 
 void loop() {
