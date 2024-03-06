@@ -26,16 +26,15 @@ void blinkLED() {
   static int LED_Count = 0;
   LED_Count++;
 
-  if (LED_Count >= 30) {
-    TimerStatus = 0;
-  }
-
   if (LED_Count >= 101) {
-    Timer1.stop();
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
     digitalWrite(ledPin3, LOW);
-    LED_Count = 0;
+    if (LED_Count >= 200) {
+      Timer1.stop();
+      TimerStatus = 0;
+      LED_Count = 0;
+    }
   }
 }
 
