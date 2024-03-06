@@ -30,7 +30,7 @@ void blinkLED() {
     digitalWrite(ledPin, LOW);
     digitalWrite(ledPin2, LOW);
     digitalWrite(ledPin3, LOW);
-    if (LED_Count >= 200) {
+    if (LED_Count >= 800) {
       Timer1.stop();
       TimerStatus = 0;
       LED_Count = 0;
