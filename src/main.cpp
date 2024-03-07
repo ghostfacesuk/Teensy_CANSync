@@ -39,7 +39,7 @@ void blinkLED() {
 }
 
 void myInterrupt() {
-  if (!sendCanMsg && TimerStatus == 0 ) {
+  if (!sendCanMsg && TimerStatus == 0) {
     sendCanMsg = true;
     Timer1.start();
     TimerStatus = 1;
