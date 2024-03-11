@@ -11,7 +11,7 @@ const int ledPin2 = 23; // Buzzer & Red LED
 const int ledPin3 = 33; // White LED Only
 
 // Timer tracker
-int TimerStatus = 1;
+volatile bool TimerStatus = false;
 
 volatile bool sendCanMsg = false;
 volatile uint32_t canCounter = 0;
@@ -23,7 +23,7 @@ FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 CAN_message_t msg;
 
 void blinkLED() {
-  static int LED_Count = 0;
+  static uint_fast16_t LED_Count = 0;
   LED_Count++;
 
   if (LED_Count >= 101) {
@@ -32,20 +32,20 @@ void blinkLED() {
     digitalWrite(ledPin3, LOW);
     if (LED_Count >= 800) {
       Timer1.stop();
-      TimerStatus = 0;
+      TimerStatus = false;
       LED_Count = 0;
     }
   }
 }
 
 void myInterrupt() {
-  if (!sendCanMsg && TimerStatus == 0) {
+  if (!sendCanMsg && !TimerStatus) {
     sendCanMsg = true;
-    Timer1.start();
-    TimerStatus = 1;
+    TimerStatus = true;
     digitalWrite(ledPin, HIGH);
     digitalWrite(ledPin2, HIGH);
     digitalWrite(ledPin3, HIGH);
+    Timer1.start();
   }
 }
 
