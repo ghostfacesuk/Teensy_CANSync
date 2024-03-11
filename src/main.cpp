@@ -25,15 +25,19 @@ void blinkLED() {
     static uint_fast16_t LED_Count = 0;
     LED_Count++;
 
-    if (LED_Count >= 101) {
-        digitalWrite(ledPinA, LOW);
-        digitalWrite(ledPinB, LOW);
-        digitalWrite(ledPinC, LOW);
-        if (LED_Count >= 800) {
+    switch(LED_Count) {
+        case 101:
+            digitalWrite(ledPinA, LOW);
+            digitalWrite(ledPinB, LOW);
+            digitalWrite(ledPinC, LOW);
+            break;
+        case 800:
             Timer1.stop();
             TimerStatus = false;
             LED_Count = 0;
-        }
+            break;
+        default:
+            break;
     }
 }
 
