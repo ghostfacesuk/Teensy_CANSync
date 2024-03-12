@@ -11,7 +11,7 @@ const u_int8_t ledPinB = 23; // Buzzer & Red LED
 const u_int8_t ledPinC = 33; // White LED Only
 
 // Timer & CAN msg flags
-volatile bool TimerStatus = false;
+volatile bool TimerStatus = true;
 volatile bool sendCanMsg = false;
 volatile uint32_t canCounter = 0;
 
@@ -31,7 +31,7 @@ void blinkLED() {
             digitalWrite(ledPinB, LOW);
             digitalWrite(ledPinC, LOW);
             break;
-        case 800:
+        case 980:
             Timer1.stop();
             TimerStatus = false;
             LED_Count = 0;
@@ -63,7 +63,6 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(28), myInterrupt, RISING);
     Timer1.initialize(1000);           // MicroSecs = 1ms
     Timer1.attachInterrupt(blinkLED);  // blinkLED function 1ms interrupt
-    Timer1.start();                    // Start the timer!
 }
 
 void loop() {
