@@ -22,16 +22,16 @@ FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> Can2;
 CAN_message_t msg;
 
 void blinkLED() {
-    static uint_fast16_t LED_Count = 0;
+    static uint_fast32_t LED_Count = 0;
     LED_Count++;
 
     switch(LED_Count) {
-        case 101:
+        case 101:  // 100ms turn LEDs/Outputs off
             digitalWrite(ledPinA, LOW);
             digitalWrite(ledPinB, LOW);
             digitalWrite(ledPinC, LOW);
             break;
-        case 980:
+        case 980:  // 980ms flag reset to stop blocking interrupt
             Timer1.stop();
             TimerStatus = false;
             LED_Count = 0;
